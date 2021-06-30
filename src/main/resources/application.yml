@@ -1,0 +1,98 @@
+spring:
+  main:
+    # sharding jdbc 需要重新注入数据源，覆盖原本注入的数据源
+    allow-bean-definition-overriding: true
+  shardingsphere:
+    # 数据源配置
+    datasource:
+      #数据源名称集合
+      names: mysql-0,mysql-master,mysql-slave-0,mysql-slave-1
+      #本地库
+      mysql-0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver‐class‐name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/sharding-data-db?serverTimezone=Asia/Shanghai&useUnicode=true
+        username: root
+        password: root
+      #主库
+      mysql-master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver‐class‐name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3307/sharding-data-db?serverTimezone=Asia/Shanghai&useUnicode=true
+        username: root
+        password: root
+      #从库0
+      mysql-slave-0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver‐class‐name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3308/sharding-data-db?serverTimezone=Asia/Shanghai&useUnicode=true
+        username: root
+        password: root
+      #从库1
+      mysql-slave-1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver‐class‐name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3309/sharding-data-db?serverTimezone=Asia/Shanghai&useUnicode=true
+        username: root
+        password: root
+    props:
+      sql:
+        # 打印解析后的SQL语句
+        show: true
+      check:
+        table:
+          metadata: true
+          # 是否在启动时检查分表元数据一致性
+          enabled: true
+    sharding:
+      #读写分离配置
+      master-slave-rules:
+        mysql-master-slave:
+          master-data-source-name: mysql-master
+          slave-data-source-names: mysql-slave-0, mysql-slave-1
+          load-balance-algorithm-type: round_robin #从库负载均衡算法类型，可选值：ROUND_ROBIN，RANDOM。若`loadBalanceAlgorithmClassName`存在则忽略该配置
+
+      tables:
+        # 分表策略 其中record为初始表
+        record:
+          key-generator:
+            column: id
+            type: SNOWFLAKE
+          actual-data-nodes: mysql-0.record,mysql-master-slave.record #注意：一旦定下来该顺序就不可改变，分库自定义策略所定
+          database-strategy:
+            standard:
+              # 分库算法
+              sharding-column: id
+              precise-algorithm-class-name: com.henyi.shardingjdbcdatealgorithm.sharding.algorithm.ShardingAlgorithmOfPreciseForDb
+          table-strategy:
+            standard:
+              #分表主要取决与record_date字段
+              sharding-column: RECORD_DATE
+              # 自定义分表算法
+              precise-algorithm-class-name: com.henyi.shardingjdbcdatealgorithm.sharding.algorithm.ShardingAlgorithmOfPreciseForTb
+              range-algorithm-class-name: com.henyi.shardingjdbcdatealgorithm.sharding.algorithm.ShardingAlgorithmOfRangeForTb
+
+      # 默认数据源 不分片的表默认执行库
+      default-data-source-name: mysql-0
+
+# 配置水平分表规则 配置后不走分片建，全局查询时能够自动获取最新的逻辑表分片
+dynamic:
+  table:
+    #date分片策略，随着日期进行递增的逻辑表名
+    date-algorithm:
+      table-list:
+        - name: record
+          # range:范围有：year,month,day 注意：用了当前范围后续不可修改
+          range: month
+          #range的偏移值，如：range为month，offset为1，那么自动生成该表的最大月份为下个月，按当前月往下走offset个月，以此类推年/月/日
+          #该值决定了该表中插入数据的时间最大值，一旦超过该最大值的时间皆会报错
+          offset: 1
+          db-list:
+            - db-type: mysql
+              create-table-sql: CREATE TABLE `record` (
+                                  `ID` BIGINT ( 32 ) NOT NULL COMMENT '主键',
+                                  `RECORD_CONTENT` VARCHAR ( 100 ) CHARACTER
+                                  SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '记录内容',
+                                  `RECORD_DATE` date NOT NULL COMMENT '记录日期',
+                                  PRIMARY KEY ( `ID` ) USING BTREE
+                                )
