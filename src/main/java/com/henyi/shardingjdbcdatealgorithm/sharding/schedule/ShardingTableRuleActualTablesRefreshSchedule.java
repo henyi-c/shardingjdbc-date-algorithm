@@ -127,7 +127,7 @@ public class ShardingTableRuleActualTablesRefreshSchedule implements Initializin
                 continue;
             }
 
-            //设置最大最小表并进行redis存储
+            //设置最大最小表并进行存储
             setMinAndMaxTable(tableName, dynamicTable, dataSource, dateFormat, range, offset);
             String minYmd = dynamicTable.getMinDate();
             //检测数据库表是否更新，并且检查各个数据库是否表名都一致
@@ -157,7 +157,7 @@ public class ShardingTableRuleActualTablesRefreshSchedule implements Initializin
 
 
     /**
-     * 设置最大最小表并进行redis存储
+     * 设置最大最小表并进行存储
      *
      * @param tableName
      * @param dynamicTable
@@ -174,7 +174,7 @@ public class ShardingTableRuleActualTablesRefreshSchedule implements Initializin
         //先取得最小时间表到当前时间的offset,然后再加上配置的offset即为最大值表
         Calendar maxCalendar = ShardingDateUtils.getCalendar(minTableYmd, range, ShardingDateUtils.getBetweenOffset(minDate, new Date(), range) + offset);
         dynamicTable.setMaxDate(dateFormat.format(maxCalendar.getTime()));
-        //存入redis中
+        //存入容器常量中
         HashMapConst.contain.put( ShardingConstant.ALGORITHM_DATE_TABLE + tableName.trim(), dynamicTable);
     }
 
