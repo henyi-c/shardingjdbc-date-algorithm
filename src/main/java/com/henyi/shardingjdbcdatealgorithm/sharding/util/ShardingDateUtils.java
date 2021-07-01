@@ -115,14 +115,40 @@ public class ShardingDateUtils {
      *
      * @return
      */
-    public static Date getTableDate(String date, SimpleDateFormat dateFormat) {
+    public static Date getTableDate(String date, String range, SimpleDateFormat dateFormat, boolean isMax) {
         try {
-            Date minDate = dateFormat.parse(date);
-            return minDate;
+            Date resDate = dateFormat.parse(date);
+            if (isMax) {
+                resDate = getMaxTime(resDate, range);
+            }
+            return resDate;
         } catch (Exception e) {
             log.error(e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * 最大值转换默认为当天的最小值，那么需要根据策略配置成为真正的最大值
+     *
+     * @param range
+     * @return
+     */
+    public static Date getMaxTime(Date resDate, String range) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(resDate);
+        switch (range) {
+            case "year":
+                calendar.add(Calendar.YEAR, 1);
+                return new Date(calendar.getTime().getTime() - 1);
+            case "day":
+                calendar.add(Calendar.DATE, 1);
+                return new Date(calendar.getTime().getTime() - 1);
+            case "month":
+            default:
+                calendar.add(Calendar.MONTH, 1);
+                return new Date(calendar.getTime().getTime() - 1);
+        }
     }
 
 }

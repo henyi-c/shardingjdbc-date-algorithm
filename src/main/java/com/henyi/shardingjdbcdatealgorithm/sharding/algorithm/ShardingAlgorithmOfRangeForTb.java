@@ -49,9 +49,9 @@ public class ShardingAlgorithmOfRangeForTb implements RangeShardingAlgorithm<Dat
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(dynamicTableByDate.getRange());
 
         //该表名中的最小时间
-        Date minTableDate = ShardingDateUtils.getTableDate(dynamicTableByDate.getMinDate(), dateFormat);
+        Date minTableDate = ShardingDateUtils.getTableDate(dynamicTableByDate.getMinDate(), range, dateFormat, false);
         //该表名中的最大时间
-        Date maxTableDate = ShardingDateUtils.getTableDate(dynamicTableByDate.getMaxDate(), dateFormat);
+        Date maxTableDate = ShardingDateUtils.getTableDate(dynamicTableByDate.getMaxDate(), range, dateFormat, true);
 
 
         Date endTime;
@@ -68,30 +68,25 @@ public class ShardingAlgorithmOfRangeForTb implements RangeShardingAlgorithm<Dat
             startTime = minTableDate;
         }
 
+        //开始时间大于结束时间，返回默认表数据
+        if (startTime.after(endTime)) {
+            return result;
+        }
         //开始时间和结束时间都小于最小日期表，返回默认表数据
         if (startTime.before(minTableDate) && endTime.before(minTableDate)) {
             return result;
         }
-
+        //开始时间和结束时间都大于最大日期表，返回默认表数据
+        if (startTime.after(maxTableDate) && endTime.after(maxTableDate)) {
+            return result;
+        }
         //开始时间比最小时间还早,把最小值赋予开始时间
         if (startTime.before(minTableDate)) {
             startTime = minTableDate;
         }
-        //开始时间比最大时间还晚,把最大值赋予开始时间
-        if (startTime.after(maxTableDate)) {
-            startTime = maxTableDate;
-        }
-        //结束时间比最小时间还早,把最小值赋予结束时间
-        if (endTime.before(maxTableDate)) {
-            endTime = minTableDate;
-        }
         //结束时间比最大时间还晚,把最大值赋予结束时间
         if (endTime.after(maxTableDate)) {
             endTime = maxTableDate;
-        }
-        //开始时间大于结束时间，这种情况返回默认表数据
-        if (startTime.after(endTime)) {
-            return result;
         }
 
         tables.addAll(getRoutTable(dateFormat, range, shardingValue.getLogicTableName(), startTime, endTime));
@@ -142,16 +137,13 @@ public class ShardingAlgorithmOfRangeForTb implements RangeShardingAlgorithm<Dat
 
         dd.setTime(startTime);
 
-        while (dd.getTime().before(endTime)) {
+        while (dd.getTime().before(endTime) || dd.getTime().equals(endTime)) {
             result.add(dateFormat.format(dd.getTime()));
             // 根据策略进行 + 1
             dd.add(ShardingDateUtils.getCalendarDateRange(range), 1);
         }
         return result;
     }
-
-
-
 
 
 }
