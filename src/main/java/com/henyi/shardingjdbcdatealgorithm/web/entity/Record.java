@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -25,7 +27,7 @@ public class Record implements Serializable {
      * 主键
      */
     @TableId("ID")
-    private String id;
+    private BigDecimal id;
 
     /**
      * 记录内容
@@ -36,6 +38,7 @@ public class Record implements Serializable {
     /**
      * 记录日期
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField("RECORD_DATE")
     private Date recordDate;
 }

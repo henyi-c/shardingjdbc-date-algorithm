@@ -1,6 +1,8 @@
 package com.henyi.shardingjdbcdatealgorithm.web.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.henyi.shardingjdbcdatealgorithm.sharding.util.DateAlgorithmRange;
+import com.henyi.shardingjdbcdatealgorithm.sharding.util.ShardingDateAlgorithmSnowFlake;
 import com.henyi.shardingjdbcdatealgorithm.web.entity.Record;
 import com.henyi.shardingjdbcdatealgorithm.web.service.RecordService;
 import com.henyi.shardingjdbcdatealgorithm.web.util.Result;
@@ -8,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 
@@ -37,7 +40,8 @@ public class RecordController {
 
 
     @PostMapping("/insert")
-    public Result insert(@RequestParam Record record) {
+    public Result insert(@ModelAttribute Record record) {
+        record.setId(ShardingDateAlgorithmSnowFlake.getId(DateAlgorithmRange.DATE_ALGORITHM_RANGE_MONTH,record.getRecordDate()));
         return Result.isSuccess(recordService.save(record));
     }
 
@@ -45,17 +49,17 @@ public class RecordController {
 
 
     @PostMapping("/update")
-    public Result update(@RequestParam Record record) {
+    public Result update(@ModelAttribute Record record) {
         return Result.isSuccess(recordService.update(Wrappers.<Record>lambdaUpdate()
-                .set(Record::getRecordDate, record.getRecordDate())
-                .eq(Record::getId, record.getId()).eq(Record::getRecordDate, record.getRecordDate())));
+                .set(Record::getRecordContent, record.getRecordContent())
+                .eq(Record::getId, record.getId())));
     }
 
 
 
-    @PostMapping("/delete")
-    public Result delete(@RequestParam Record record) {
+    @GetMapping("/delete")
+    public Result delete(@RequestParam BigDecimal id) {
         return Result.isSuccess(recordService.remove(Wrappers.<Record>lambdaUpdate()
-                .eq(Record::getId,  record.getId())));
+                .eq(Record::getId, id)));
     }
 }

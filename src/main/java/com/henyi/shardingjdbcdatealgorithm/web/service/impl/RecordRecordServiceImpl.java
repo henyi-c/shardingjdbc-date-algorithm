@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.henyi.shardingjdbcdatealgorithm.web.entity.Record;
 import com.henyi.shardingjdbcdatealgorithm.web.mapper.RecordMapper;
 import com.henyi.shardingjdbcdatealgorithm.web.service.RecordService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shardingsphere.transaction.annotation.ShardingTransactionType;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +32,13 @@ public class RecordRecordServiceImpl extends ServiceImpl<RecordMapper, Record> i
 
     @Override
     public List getList(Map<String, Object> params) {
+        QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
+        String id = MapUtil.getStr(params, "id");
         Date startTime = MapUtil.getDate(params, "startTime");
         Date endTime = MapUtil.getDate(params, "endTime");
-        QueryWrapper<Record> queryWrapper = new QueryWrapper<>();
+        if (!StringUtils.isBlank(id)) {
+            queryWrapper.eq("ID", new BigDecimal(id));
+        }
         if (startTime != null) {
             queryWrapper.ge("RECORD_DATE", startTime);
         }

@@ -1,7 +1,7 @@
 package com.henyi.shardingjdbcdatealgorithm.web.mapper;
 
 import com.henyi.shardingjdbcdatealgorithm.web.entity.Record;
-import org.springframework.stereotype.Repository;
+import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -12,6 +12,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author henyi-c
  * @since 2021-07-01
  */
-@Repository
+@Mapper
 public interface RecordMapper extends BaseMapper<Record> {
 }

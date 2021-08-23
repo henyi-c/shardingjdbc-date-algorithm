@@ -26,6 +26,14 @@ public class DynamicTableByDate {
      */
     private Integer offset;
     /**
+     * sharding分片键-主键
+     */
+    private String shardingColumnsId;
+    /**
+     * sharding分片键-日期
+     */
+    private String shardingColumnsDate;
+    /**
      * 数据库中表最小日期
      */
     private String minDate;

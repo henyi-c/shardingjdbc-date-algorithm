@@ -1,5 +1,7 @@
 package com.henyi.shardingjdbcdatealgorithm.sharding.util;
 
+import com.henyi.shardingjdbcdatealgorithm.sharding.ymlbean.DynamicTableByDate;
+
 import java.util.HashMap;
 
 /**
@@ -13,5 +15,5 @@ import java.util.HashMap;
  */
 public class HashMapConst {
 
-    public static HashMap<String, Object> contain = new HashMap<>();
+    public static HashMap<String, DynamicTableByDate> tableAlgorithmContain = new HashMap<>();
 }

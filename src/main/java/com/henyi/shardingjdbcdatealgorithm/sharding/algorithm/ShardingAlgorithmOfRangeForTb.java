@@ -2,13 +2,9 @@ package com.henyi.shardingjdbcdatealgorithm.sharding.algorithm;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
-import com.henyi.shardingjdbcdatealgorithm.sharding.util.HashMapConst;
-import com.henyi.shardingjdbcdatealgorithm.sharding.util.ShardingConstant;
 import com.henyi.shardingjdbcdatealgorithm.sharding.util.ShardingDateUtils;
 import com.henyi.shardingjdbcdatealgorithm.sharding.ymlbean.DynamicTableByDate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shardingsphere.api.sharding.standard.RangeShardingAlgorithm;
-import org.apache.shardingsphere.api.sharding.standard.RangeShardingValue;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -27,24 +23,20 @@ import java.util.*;
  */
 @Slf4j
 @Component
-public class ShardingAlgorithmOfRangeForTb implements RangeShardingAlgorithm<Date> {
+public class ShardingAlgorithmOfRangeForTb {
 
 
-    @Override
-    public Collection<String> doSharding(Collection<String> availableTargetNames, RangeShardingValue<Date> shardingValue) {
+    public static Collection<String> doSharding(DynamicTableByDate dynamicTableByDate, Range<Date> shardingKey) {
         Collection<String> result = new LinkedHashSet<>();
 
-        Range<Date> shardingKey = shardingValue.getValueRange();
         //逻辑表名
-        String logicTableName = shardingValue.getLogicTableName().trim();
+        String logicTableName = dynamicTableByDate.getName().trim();
 
         //默认将初始表放入落点
         Collection<String> tables = new HashSet<>();
         tables.add(logicTableName);
         result.addAll(tables);
 
-        //HashMapConst查询该表名，拿取range
-        DynamicTableByDate dynamicTableByDate = (DynamicTableByDate) HashMapConst.contain.get(ShardingConstant.ALGORITHM_DATE_TABLE + logicTableName);
         String range = dynamicTableByDate.getRange();
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(dynamicTableByDate.getRange());
 
@@ -89,7 +81,7 @@ public class ShardingAlgorithmOfRangeForTb implements RangeShardingAlgorithm<Dat
             endTime = maxTableDate;
         }
 
-        tables.addAll(getRoutTable(dateFormat, range, shardingValue.getLogicTableName(), startTime, endTime));
+        tables.addAll(getRoutTable(dateFormat, range, logicTableName, startTime, endTime));
 
         if (tables != null && tables.size() > 0) {
             result.addAll(tables);
@@ -107,7 +99,7 @@ public class ShardingAlgorithmOfRangeForTb implements RangeShardingAlgorithm<Dat
      * @param endTime
      * @return
      */
-    private Collection<String> getRoutTable(SimpleDateFormat dateFormat, String range, String logicTableName, Date startTime, Date endTime) {
+    private static Collection<String> getRoutTable(SimpleDateFormat dateFormat, String range, String logicTableName, Date startTime, Date endTime) {
 
         Set<String> rouTables = new HashSet<>();
 
@@ -128,7 +120,7 @@ public class ShardingAlgorithmOfRangeForTb implements RangeShardingAlgorithm<Dat
      * @param endTime
      * @return
      */
-    private List<String> getRangeNameList(SimpleDateFormat dateFormat, String range, Date startTime, Date endTime) {
+    private static List<String> getRangeNameList(SimpleDateFormat dateFormat, String range, Date startTime, Date endTime) {
 
         List<String> result = Lists.newArrayList();
 

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 
 
@@ -17,7 +18,7 @@ import java.util.Collection;
  * @since 2021-07-01
  */
 @Slf4j
-public class ShardingAlgorithmOfPreciseForDb implements PreciseShardingAlgorithm<Long> {
+public class ShardingAlgorithmOfPreciseForDb implements PreciseShardingAlgorithm<BigDecimal> {
 
     /**
      * @param databaseNames 有效的数据源
@@ -26,17 +27,17 @@ public class ShardingAlgorithmOfPreciseForDb implements PreciseShardingAlgorithm
      */
     @Override
     public String doSharding(Collection<String> databaseNames,
-                             PreciseShardingValue<Long> shardingValue) {
+                             PreciseShardingValue<BigDecimal> shardingValue) {
 
         String[] arrays = new String[databaseNames.size()];
         databaseNames.toArray(arrays);
-        Long index = shardingValue.getValue() % databaseNames.size();
+        BigDecimal index = shardingValue.getValue().remainder(new BigDecimal(String.valueOf(databaseNames.size())));
         for (Integer i = 0; i < arrays.length; i++) {
             //如果数据源有多个，根据分片键取模数据源个数，如果得到的数和循环相等，那么就落点该数据源
             String databaseName = arrays[i];
             if (i == index.intValue()) {
                 //返回相应的数据库
-                log.info("databaseName" + databaseName);
+                log.info("databaseName  " + databaseName);
                 return databaseName;
             }
         }

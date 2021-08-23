@@ -1,16 +1,12 @@
 package com.henyi.shardingjdbcdatealgorithm.sharding.algorithm;
 
-import com.henyi.shardingjdbcdatealgorithm.sharding.util.HashMapConst;
-import com.henyi.shardingjdbcdatealgorithm.sharding.util.ShardingConstant;
 import com.henyi.shardingjdbcdatealgorithm.sharding.util.ShardingDateUtils;
 import com.henyi.shardingjdbcdatealgorithm.sharding.ymlbean.DynamicTableByDate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -25,33 +21,42 @@ import java.util.Date;
  * @since 2021-07-01
  */
 @Slf4j
-public class ShardingAlgorithmOfPreciseForTb implements PreciseShardingAlgorithm<Date> {
+public class ShardingAlgorithmOfPreciseForTb {
 
-    @Override
-    public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<Date> shardingValue) {
 
+    public static String doSharding(DynamicTableByDate dynamicTableByDate, BigDecimal id) throws ParseException {
+
+        //拆分id
+        //根据时间范围拿取日期
+        Date shardingValue = ShardingDateUtils.analysisIdByRange(dynamicTableByDate.getRange(), id);
+        return doSharding(dynamicTableByDate, shardingValue);
+    }
+
+
+    public static String doSharding(DynamicTableByDate dynamicTableByDate, Date shardingValue) {
 
         StringBuffer tableName = new StringBuffer();
 
-        //HashMapConst中查询该表名，拿取最大最小时间
-        DynamicTableByDate dynamicTableByDate = (DynamicTableByDate) HashMapConst.contain.get( ShardingConstant.ALGORITHM_DATE_TABLE + shardingValue.getLogicTableName().trim());
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(dynamicTableByDate.getRange());
 
+        String logicTableName = dynamicTableByDate.getName();
+        //拿取最大最小时间
         String minDate = dynamicTableByDate.getMinDate();
         String maxDate = dynamicTableByDate.getMaxDate();
         try {
             //小于最小时间或大于最大时间
-            if (dateFormat.parse(minDate).getTime() > shardingValue.getValue().getTime() || shardingValue.getValue().getTime() > dateFormat.parse(maxDate).getTime()) {
-                return shardingValue.getLogicTableName();
+            if (dateFormat.parse(minDate).getTime() > shardingValue.getTime() || shardingValue.getTime() > dateFormat.parse(maxDate).getTime()) {
+                return logicTableName;
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        log.info("执行操作的表名{}", shardingValue.getLogicTableName() + "_" + dateFormat.format(shardingValue.getValue()));
+        log.info("执行操作的表名为  {}", logicTableName + "_" + dateFormat.format(shardingValue));
 
-        tableName.append(shardingValue.getLogicTableName()).append("_").append(dateFormat.format(shardingValue.getValue()));
+        tableName.append(logicTableName).append("_").append(dateFormat.format(shardingValue));
 
         return tableName.toString();
     }
+
 }
