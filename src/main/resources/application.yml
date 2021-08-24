@@ -93,9 +93,9 @@ dynamic:
           db-list:
             - db-type: mysql
               create-table-sql: CREATE TABLE `record` (
-                                  `ID` decimal ( 60 ) NOT NULL COMMENT '主键',
-                                  `RECORD_CONTENT` VARCHAR ( 100 ) CHARACTER
-                                  SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '记录内容',
-                                  `RECORD_DATE` datetime NOT NULL COMMENT '记录日期',
-                                  PRIMARY KEY ( `ID` ) USING BTREE
-                                )
+                `ID` VARCHAR ( 28 ) NOT NULL COMMENT '主键',
+                `RECORD_CONTENT` VARCHAR ( 100 ) CHARACTER
+                SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '记录内容',
+                `RECORD_DATE` datetime NOT NULL COMMENT '记录日期',
+                PRIMARY KEY ( `ID` ) USING BTREE
+                )

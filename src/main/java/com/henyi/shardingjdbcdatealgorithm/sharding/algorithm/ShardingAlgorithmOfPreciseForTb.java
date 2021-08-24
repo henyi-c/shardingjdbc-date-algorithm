@@ -4,7 +4,6 @@ import com.henyi.shardingjdbcdatealgorithm.sharding.util.ShardingDateUtils;
 import com.henyi.shardingjdbcdatealgorithm.sharding.ymlbean.DynamicTableByDate;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,7 +23,7 @@ import java.util.Date;
 public class ShardingAlgorithmOfPreciseForTb {
 
 
-    public static String doSharding(DynamicTableByDate dynamicTableByDate, BigDecimal id) throws ParseException {
+    public static String doSharding(DynamicTableByDate dynamicTableByDate, String id) throws ParseException {
 
         //拆分id
         //根据时间范围拿取日期

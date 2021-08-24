@@ -12,7 +12,6 @@ import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ public class RecordRecordServiceImpl extends ServiceImpl<RecordMapper, Record> i
         Date startTime = MapUtil.getDate(params, "startTime");
         Date endTime = MapUtil.getDate(params, "endTime");
         if (!StringUtils.isBlank(id)) {
-            queryWrapper.eq("ID", new BigDecimal(id));
+            queryWrapper.eq("ID", id);
         }
         if (startTime != null) {
             queryWrapper.ge("RECORD_DATE", startTime);

@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 
@@ -58,7 +57,7 @@ public class RecordController {
 
 
     @GetMapping("/delete")
-    public Result delete(@RequestParam BigDecimal id) {
+    public Result delete(@RequestParam String id) {
         return Result.isSuccess(recordService.remove(Wrappers.<Record>lambdaUpdate()
                 .eq(Record::getId, id)));
     }

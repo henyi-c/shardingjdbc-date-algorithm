@@ -8,7 +8,6 @@ import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingAlgorit
 import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingValue;
 import com.google.common.collect.Range;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -65,7 +64,7 @@ public class ComplexKeysShardingAlgorithmForTb implements ComplexKeysShardingAlg
     @SneakyThrows
     private void getPrecise(ComplexKeysShardingValue complexKeysShardingValue, DynamicTableByDate dynamicTableByDate, List<String> shardingSuffix) {
         // 得到每个分片健精确的对应的值
-        Collection<BigDecimal> idValues = this.getShardingValue(complexKeysShardingValue.getColumnNameAndShardingValuesMap(), dynamicTableByDate.getShardingColumnsId());
+        Collection<String> idValues = this.getShardingValue(complexKeysShardingValue.getColumnNameAndShardingValuesMap(), dynamicTableByDate.getShardingColumnsId());
 
         Collection<Date> recordDateValues = this.getShardingValue(complexKeysShardingValue.getColumnNameAndShardingValuesMap(), dynamicTableByDate.getShardingColumnsDate());
 
@@ -74,7 +73,7 @@ public class ComplexKeysShardingAlgorithmForTb implements ComplexKeysShardingAlg
 
         //id不为空，进行返回对应表
         if (!idValues.isEmpty()) {
-            for (BigDecimal id : idValues) {
+            for (String id : idValues) {
                 shardingSuffix.add(ShardingAlgorithmOfPreciseForTb.doSharding(dynamicTableByDate, id));
             }
             return;

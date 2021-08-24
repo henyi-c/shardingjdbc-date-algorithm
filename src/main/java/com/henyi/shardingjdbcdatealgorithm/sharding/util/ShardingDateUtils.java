@@ -3,7 +3,6 @@ package com.henyi.shardingjdbcdatealgorithm.sharding.util;
 import cn.hutool.core.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -47,17 +46,16 @@ public class ShardingDateUtils {
      * @param id
      * @return
      */
-    public static Date analysisIdByRange(String range, BigDecimal id) throws ParseException {
+    public static Date analysisIdByRange(String range, String id) throws ParseException {
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(range);
-        String s = id.toString();
-        switch (s) {
+        switch (id) {
             case "year":
-                return dateFormat.parse(s.substring(0, 4));
+                return dateFormat.parse(id.substring(0, 4));
             case "day":
-                return dateFormat.parse(s.substring(0, 8));
+                return dateFormat.parse(id.substring(0, 8));
             case "month":
             default:
-                return dateFormat.parse(s.substring(0, 6));
+                return dateFormat.parse(id.substring(0, 6));
         }
     }
 

@@ -1,6 +1,5 @@
 package com.henyi.shardingjdbcdatealgorithm.sharding.util;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -138,13 +137,13 @@ public class ShardingDateAlgorithmSnowFlake {
         return System.currentTimeMillis();
     }
 
-    public static BigDecimal getId(String dateAlgorithmType, Date date) {
+    public static String getId(String dateAlgorithmType, Date date) {
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(dateAlgorithmType);
-        return new BigDecimal(dateFormat.format(date) + WORKER.nextId());
+        return dateFormat.format(date) + WORKER.nextId();
     }
 
-    public static BigDecimal getId(String dateAlgorithmType, String date) throws ParseException {
+    public static String getId(String dateAlgorithmType, String date) throws ParseException {
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(dateAlgorithmType);
-        return new BigDecimal(dateFormat.format(dateFormat.parse(date)) + WORKER.nextId());
+        return dateFormat.format(dateFormat.parse(date)) + WORKER.nextId();
     }
 }

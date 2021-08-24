@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -27,7 +26,7 @@ public class Record implements Serializable {
      * 主键
      */
     @TableId("ID")
-    private BigDecimal id;
+    private String id;
 
     /**
      * 记录内容
