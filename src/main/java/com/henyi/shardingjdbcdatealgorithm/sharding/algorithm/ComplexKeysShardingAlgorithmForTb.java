@@ -43,7 +43,7 @@ public class ComplexKeysShardingAlgorithmForTb implements ComplexKeysShardingAlg
      * @param key
      * @return
      */
-    private Collection getShardingValue(Map<String,Collection> columnNameAndShardingValuesMap, String key) {
+    private Collection getShardingValue(Map<String, Collection> columnNameAndShardingValuesMap, String key) {
         Collection valueSet = new ArrayList<>();
 
         if (columnNameAndShardingValuesMap.containsKey(key.toLowerCase())) {
@@ -53,20 +53,25 @@ public class ComplexKeysShardingAlgorithmForTb implements ComplexKeysShardingAlg
         } else {
             return valueSet;
         }
-        if(columnNameAndShardingValuesMap.get(key) instanceof Collection){
+        if (columnNameAndShardingValuesMap.get(key) instanceof Collection) {
             valueSet.addAll(columnNameAndShardingValuesMap.get(key));
-        }else{
+        } else {
             valueSet.add(columnNameAndShardingValuesMap.get(key));
         }
         return valueSet;
     }
 
+
+    /**
+     * 精确分片
+     * @param complexKeysShardingValue
+     * @param dynamicTableByDate
+     * @param shardingSuffix
+     */
     @SneakyThrows
     private void getPrecise(ComplexKeysShardingValue complexKeysShardingValue, DynamicTableByDate dynamicTableByDate, List<String> shardingSuffix) {
         // 得到每个分片健精确的对应的值
         Collection<String> idValues = this.getShardingValue(complexKeysShardingValue.getColumnNameAndShardingValuesMap(), dynamicTableByDate.getShardingColumnsId());
-
-        Collection<Date> recordDateValues = this.getShardingValue(complexKeysShardingValue.getColumnNameAndShardingValuesMap(), dynamicTableByDate.getShardingColumnsDate());
 
         //选择哪张表
         //优先级 id>record_date
@@ -79,17 +84,7 @@ public class ComplexKeysShardingAlgorithmForTb implements ComplexKeysShardingAlg
             return;
         }
 
-        //id为空，时间不为空，返回时间对应的表
-        if (!recordDateValues.isEmpty()) {
-            for (Date date : recordDateValues) {
-                shardingSuffix.add(ShardingAlgorithmOfPreciseForTb.doSharding(dynamicTableByDate, date));
-            }
-            return;
-        }
     }
-
-
-
 
 
     /**
@@ -106,7 +101,7 @@ public class ComplexKeysShardingAlgorithmForTb implements ComplexKeysShardingAlg
 
         //id为空，时间不为空，返回时间对应的表
         if (!recordDateValues.isEmpty()) {
-            for (Range<Date> range: recordDateValues) {
+            for (Range<Date> range : recordDateValues) {
                 shardingSuffix.addAll(ShardingAlgorithmOfRangeForTb.doSharding(dynamicTableByDate, range));
             }
         }

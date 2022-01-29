@@ -6,7 +6,7 @@ package com.henyi.shardingjdbcdatealgorithm.sharding.util;
  */
 public class DateAlgorithmRange {
 
-    public static String DATE_ALGORITHM_RANGE_DAY = "day";
-    public static String DATE_ALGORITHM_RANGE_MONTH = "month";
-    public static String DATE_ALGORITHM_RANGE_YEAR = "year";
+    public static final String DATE_ALGORITHM_RANGE_DAY = "day";
+    public static final String DATE_ALGORITHM_RANGE_MONTH = "month";
+    public static final String DATE_ALGORITHM_RANGE_YEAR = "year";
 }

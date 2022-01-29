@@ -1,8 +1,13 @@
 spring:
+  #是否开启jta sharding开启这个也同步跟着开启即可，不同步可能会导致线程溢出等问题
+  jta:
+    enabled: false
+
   main:
     # sharding jdbc 需要重新注入数据源，覆盖原本注入的数据源
     allow-bean-definition-overriding: true
   shardingsphere:
+    enable: false
     # 数据源配置
     datasource:
       #数据源名称集合

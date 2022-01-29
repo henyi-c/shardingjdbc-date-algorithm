@@ -34,7 +34,7 @@ public class ShardingAlgorithmOfPreciseForTb {
 
     public static String doSharding(DynamicTableByDate dynamicTableByDate, Date shardingValue) {
 
-        StringBuffer tableName = new StringBuffer();
+        StringBuilder tableName = new StringBuilder();
 
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(dynamicTableByDate.getRange());
 
@@ -48,7 +48,7 @@ public class ShardingAlgorithmOfPreciseForTb {
                 return logicTableName;
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
 
         log.info("执行操作的表名为  {}", logicTableName + "_" + dateFormat.format(shardingValue));

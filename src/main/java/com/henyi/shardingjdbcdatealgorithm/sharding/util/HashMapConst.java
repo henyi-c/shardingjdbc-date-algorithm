@@ -15,5 +15,5 @@ import java.util.HashMap;
  */
 public class HashMapConst {
 
-    public static HashMap<String, DynamicTableByDate> tableAlgorithmContain = new HashMap<>();
+    public static final HashMap<String, DynamicTableByDate> tableAlgorithmContain = new HashMap<>();
 }

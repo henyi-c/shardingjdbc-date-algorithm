@@ -146,4 +146,13 @@ public class ShardingDateAlgorithmSnowFlake {
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(dateAlgorithmType);
         return dateFormat.format(dateFormat.parse(date)) + WORKER.nextId();
     }
+
+    /**
+     * 默认采用月份策略生成ID
+     * @return
+     */
+    public static String getId() {
+        SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat("month");
+        return dateFormat.format( new Date()) + WORKER.nextId();
+    }
 }

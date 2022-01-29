@@ -48,7 +48,7 @@ public class ShardingDateUtils {
      */
     public static Date analysisIdByRange(String range, String id) throws ParseException {
         SimpleDateFormat dateFormat = ShardingDateUtils.getDateFormat(range);
-        switch (id) {
+        switch (range) {
             case "year":
                 return dateFormat.parse(id.substring(0, 4));
             case "day":

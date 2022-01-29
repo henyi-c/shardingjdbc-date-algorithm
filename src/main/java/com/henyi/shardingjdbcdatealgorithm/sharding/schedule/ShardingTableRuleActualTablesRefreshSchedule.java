@@ -12,6 +12,7 @@ import com.henyi.shardingjdbcdatealgorithm.sharding.ymlbean.DynamicTableByDate;
 import com.henyi.shardingjdbcdatealgorithm.sharding.ymlbean.DynamicTableListByDate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shardingsphere.core.rule.ShardingRule;
 import org.apache.shardingsphere.core.rule.TableRule;
 import org.apache.shardingsphere.shardingjdbc.jdbc.core.datasource.ShardingDataSource;
 import org.apache.shardingsphere.underlying.common.config.exception.ShardingSphereConfigurationException;
@@ -34,16 +35,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * <p>
+ * @Author: leo我男神
+ * @Date: 2021/5/13 9:45
  * 定时任务进行更新和执行分表
- *
- * </p>
- *
- * @author henyi-c
- * @since 2021-07-01
  */
 @Component
 @EnableScheduling
@@ -52,13 +50,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ShardingTableRuleActualTablesRefreshSchedule implements InitializingBean {
 
+    private boolean enabled;
 
     @Resource
     private DynamicTableListByDate list;
 
     @Resource
     private DataSource dataSource;
-
 
     public ShardingTableRuleActualTablesRefreshSchedule() {
     }
@@ -98,13 +96,31 @@ public class ShardingTableRuleActualTablesRefreshSchedule implements Initializin
      * @throws IllegalAccessException
      */
     private void setDynamicTableRule(String strategyRange) throws NoSuchFieldException, IllegalAccessException, ParseException {
+        //未开启sharding
+        if (!enabled) {
+            return;
+        }
+        List<DynamicTableByDate> list = this.list.getTableList();
 
-        List<DynamicTableByDate> list;
-        if (StringUtils.isBlank(strategyRange)) {
-            list = this.list.getTableList();
-        } else {
+        //未配置基于平台的策略,直接返回
+        if (Objects.isNull(list)) {
+            return;
+        }
+        if (!StringUtils.isBlank(strategyRange)) {
             list = this.list.getTableList().stream().filter(e -> strategyRange.equals(e.getRange())).collect(Collectors.toList());
         }
+
+        ShardingDataSource dataSource = (ShardingDataSource) this.dataSource;
+        ShardingRule rule = dataSource.getRuntimeContext().getRule();
+        rule.getBroadcastTables();
+        //获取默认源中所有的表名
+        List<String> defaultSourceAllTable = ShardingDbUtils.getDefaultSourceAllTable(dataSource);
+        //筛选掉需要分片的表
+        List<String> unCutTables = filterTables(defaultSourceAllTable, list);
+        //设置所有未分片的库变为广播表
+        rule.getRuleConfiguration().setBroadcastTables(unCutTables);
+        rule.getBroadcastTables().addAll(unCutTables);
+
         for (DynamicTableByDate dynamicTable : list) {
             String range = dynamicTable.getRange();
             Integer offset = dynamicTable.getOffset();
@@ -116,11 +132,9 @@ public class ShardingTableRuleActualTablesRefreshSchedule implements Initializin
 
             String tableName = dynamicTable.getName();
 
-            ShardingDataSource dataSource = (ShardingDataSource) this.dataSource;
-
             TableRule tableRule = null;
             try {
-                tableRule = dataSource.getRuntimeContext().getRule().getTableRule(tableName);
+                tableRule = rule.getTableRule(tableName);
                 log.info(tableRule.toString());
             } catch (ShardingSphereConfigurationException e) {
                 log.error("逻辑表：{},不存在配置！", tableName);
@@ -153,6 +167,34 @@ public class ShardingTableRuleActualTablesRefreshSchedule implements Initializin
             }
             setActualTable(range, tableRule, localDateTime, maxLocalDateTime, dateFormat);
         }
+    }
+
+
+    /**
+     * 过滤掉需要分片的表，剩下的指定默认数据源
+     *
+     * @param defaultSourceAllTable
+     * @param list
+     * @return
+     */
+    private List<String> filterTables(List<String> defaultSourceAllTable, List<DynamicTableByDate> list) {
+        List<String> cutTables = new ArrayList<>();
+
+        for (DynamicTableByDate dynamicTable : list) {
+            String tableName = dynamicTable.getName();
+            for (String defaultTableName : defaultSourceAllTable) {
+                if (defaultTableName.equals(tableName)) {
+                    cutTables.add(defaultTableName);
+                } else if (defaultTableName.contains(tableName) && defaultTableName.contains("_")) {
+                    String number = defaultTableName.substring(defaultTableName.lastIndexOf("_") + 1);
+                    if (number.length() >= 4 && Pattern.matches("^[-\\+]?[\\d]*$", number)) {
+                        cutTables.add(defaultTableName);
+                    }
+                }
+            }
+        }
+        defaultSourceAllTable.removeAll(cutTables);
+        return defaultSourceAllTable;
     }
 
 
@@ -349,4 +391,11 @@ public class ShardingTableRuleActualTablesRefreshSchedule implements Initializin
         setDynamicTableRule(null);
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }
