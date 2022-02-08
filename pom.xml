@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.5.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.henyi</groupId>
     <artifactId>shardingjdbc-date-algorithm</artifactId>
@@ -15,40 +15,52 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>1.8</java.version>
+        <com.alibaba.druid>1.2.8</com.alibaba.druid>
+        <com.baomidou.mybatis-plus-boot-starter>3.5.1</com.baomidou.mybatis-plus-boot-starter>
+        <mysql.mysql-connector-java>8.0.28</mysql.mysql-connector-java>
+        <sharding-jdbc>4.1.1</sharding-jdbc>
+        <hutool.version>5.7.20</hutool.version>
+        <lombok.version>1.18.22</lombok.version>
+        <maven-plugin.version>2.5.2</maven-plugin.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- Druid -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>1.2.5</version>
+            <version>${com.alibaba.druid}</version>
         </dependency>
         <!-- mybatis -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.2</version>
+            <version>${com.baomidou.mybatis-plus-boot-starter}</version>
         </dependency>
         <!-- MySql -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.mysql-connector-java}</version>
         </dependency>
         <!-- sharding-jdbc -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
-            <version>4.1.1</version>
+            <version>${sharding-jdbc}</version>
         </dependency>
         <!-- JdbcTemplate -->
         <dependency>
@@ -59,19 +71,19 @@
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>sharding-transaction-xa-core</artifactId>
-            <version>4.1.1</version>
+            <version>${sharding-jdbc}</version>
         </dependency>
         <!-- hutool -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.7.2</version>
+            <version>${hutool.version}</version>
         </dependency>
         <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.2</version>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -84,7 +96,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>${maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
