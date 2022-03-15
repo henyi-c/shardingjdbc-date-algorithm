@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bbcbaebd-ddef-4d22-a7a7-39e1fa875f41",
+		"_postman_id": "87053057-2b21-4abe-bd36-3067cdaf983e",
 		"name": "sharding Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -76,7 +76,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"202203168495635132190722\",\r\n    \"recordContent\":\"123\"\r\n}",
+					"raw": "{\r\n    \"id\": \"202203168495635132190722\",\r\n    \"recordContent\": \"123\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -84,16 +84,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/record/update",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"record",
-						"update"
-					]
+					"raw": ""
 				}
 			},
 			"response": []
