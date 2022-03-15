@@ -45,4 +45,4 @@
 
 3：必须采用@ShardingTransactionType(TransactionType.XA)和@Transactional(rollbackFor = Exception.class)进行搭配
 
-4：本项目只演示了基本的demo,实际业务上会存在很多sharding不支持的sql问题，具体可访问https://blog.51cto.com/u_14355948/2708929查看具体sql注意点
+4：本项目只演示了基本的demo,实际业务上会存在很多sharding不支持的sql问题，具体可访问查看具体sql注意点 https://blog.51cto.com/u_14355948/2708929
