@@ -1,25 +1,40 @@
 # shardingsphere-jdbc-date-algorithm
 
 #项目介绍
+
 基于springboot+shardingsphere-jdbc+mybatisplus实现按日期 年/月/日 策略进行动态分表兼容配置多数据源，读写分离，主从等
 
+
 #使用说明
+
 根目录有postman文件测试案例
+
 具体可参照案例进行实现即可
 
+
 1:新增操作
+
 插入的数据中请不要乱设置ID的值，主键必须人为代码中设置ID为ShardingDateAlgorithmSnowFlake.getId(dateAlgorithmType,date)
+
 插入的数据中该时间字段的值若非为时间区间的表所存储对应的时间数据，就会落在原始表(record)中,符合规则的落入对应表中
 
 
+
 2:查询操作
+
 如果不包含查询条件，就会去查询所有的库中对应该业务表的真实表
+
 如果只带了主键条件，因为主键的值ShardingDateAlgorithmSnowFlake.getId(dateAlgorithmType,date)是带有时间意义的，那么可以直接定位到具体的库和具体的表
+
 如果只带了时间，根据时间范围去多个库中查，拿取对应范围的表。
+
 如果两个都带，就直接定位主键条件即可
 
+
 3:更新操作
+
 不能更新复合分片的值（主键的值和时间值），这样会打乱分片策略，定位不到数据位置
+
 
 
 #注意事项
