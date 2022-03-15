@@ -1,13 +1,13 @@
 spring:
   #是否开启jta sharding开启这个也同步跟着开启即可，不同步可能会导致线程溢出等问题
   jta:
-    enabled: false
+    enabled: true
 
   main:
     # sharding jdbc 需要重新注入数据源，覆盖原本注入的数据源
     allow-bean-definition-overriding: true
   shardingsphere:
-    enable: false
+    enabled: true
     # 数据源配置
     datasource:
       #数据源名称集合
@@ -75,8 +75,6 @@ spring:
               #分表主要取决与record_date字段
               sharding-columns: ID,RECORD_DATE
               # 自定义分表算法
-              #precise-algorithm-class-name: com.henyi.shardingjdbcdatealgorithm.sharding.algorithm.ShardingAlgorithmOfPreciseForTb
-              #range-algorithm-class-name: com.henyi.shardingjdbcdatealgorithm.sharding.algorithm.ShardingAlgorithmOfRangeForTb
               algorithm-class-name: com.henyi.shardingjdbcdatealgorithm.sharding.algorithm.ComplexKeysShardingAlgorithmForTb
       # 默认数据源 不分片的表默认执行库
       default-data-source-name: mysql-0
@@ -92,13 +90,13 @@ dynamic:
           range: month
           #range的偏移值，如：range为month，offset为1，那么自动生成该表的最大月份为下个月，按当前月往下走offset个月，以此类推年/月/日
           #该值决定了该表中插入数据的时间最大值，一旦超过该最大值的时间皆会报错
-          offset: 1
+          offset: 2
           sharding-columns-id: ID
           sharding-columns-date: RECORD_DATE
           db-list:
             - db-type: mysql
               create-table-sql: CREATE TABLE `record` (
-                `ID` VARCHAR ( 28 ) NOT NULL COMMENT '主键',
+                `ID` VARCHAR ( 32 ) NOT NULL COMMENT '主键',
                 `RECORD_CONTENT` VARCHAR ( 100 ) CHARACTER
                 SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '记录内容',
                 `RECORD_DATE` datetime NOT NULL COMMENT '记录日期',

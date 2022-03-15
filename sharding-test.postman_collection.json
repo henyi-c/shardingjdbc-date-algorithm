@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3f5725e6-6aa4-49ef-b20f-277b0696e701",
+		"_postman_id": "bbcbaebd-ddef-4d22-a7a7-39e1fa875f41",
 		"name": "sharding Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -11,19 +11,13 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "id",
-							"value": "1",
-							"type": "text"
-						},
-						{
-							"key": "recordDate",
-							"value": " 2021-08-01 10:00:00",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\r\n    \"recordDate\": \"2022-03-01 10:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "http://localhost:8080/record/insert",
@@ -53,7 +47,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"id\":\"20210894620157506359300\",\"startTime\":\"2021-08-01 10:00:00\",\"endTime\":\"2021-08-31 10:00:00\"}",
+					"raw": "{\r\n    \"id\": \"202203168495635132190722\",\r\n    \"startTime\": \"2021-08-01 10:00:00\",\r\n    \"endTime\": \"2022-08-31 10:00:00\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -81,19 +75,13 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "id",
-							"value": "20210894620147175788546",
-							"type": "text"
-						},
-						{
-							"key": "recordContent",
-							"value": "123",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"202203168495635132190722\",\r\n    \"recordContent\":\"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "http://localhost:8080/record/update",
@@ -116,7 +104,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/record/delete?id=20210894620147175788546",
+					"raw": "http://localhost:8080/record/delete/202203168495635132190722",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -124,13 +112,8 @@
 					"port": "8080",
 					"path": [
 						"record",
-						"delete"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "20210894620147175788546"
-						}
+						"delete",
+						"202203168495635132190722"
 					]
 				}
 			},
