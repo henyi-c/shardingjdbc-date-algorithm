@@ -112,7 +112,12 @@ public class ShardingDbUtils {
             String[] types = {"TABLE"};
             rs = data.getTables(getDatabaseName(data), null, tableName + "%", types);
             while (rs.next()) {
-                tableNames.add(rs.getString("TABLE_NAME"));
+                String tName = rs.getString("TABLE_NAME");
+                String suffix = tName.replace(tableName, "").trim();
+                if (suffix.matches("^[1-9]\\d*$")) {
+                    //是否正整数,过滤常规非数字类型
+                    tableNames.add(rs.getString("TABLE_NAME"));
+                }
             }
         } catch (Exception e) {
             log.error(e.getMessage());
